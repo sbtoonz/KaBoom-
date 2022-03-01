@@ -7,6 +7,9 @@ this is the radius that will be destroyed if you alt place + middle mouse click 
 
 middle mouse clicking to remove should work as normal
 
+<img src="https://github.com/sbtoonz/KaBoom-/blob/master/Kaboom/ThunderStore/ezgif.com-gif-maker%20(3).gif">
+
+
 the radius is configurable and is sync'd to the server if this mod is being used on a server
 
 this mod is server sync'd and is required to live on the server if you wish to use it on one 

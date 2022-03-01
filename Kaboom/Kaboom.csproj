@@ -97,7 +97,7 @@
   <ItemGroup>
     <Content Include="ILRepack.targets" />
     <Content Include="Libs\ServerSync.dll" />
-    <Content Include="ThunderStore\ezgif.com-gif-maker (3).gif" />
+    <Content Include="ThunderStore\kaboom.gif" />
     <Content Include="ThunderStore\icon.png" />
     <Content Include="ThunderStore\manifest.json" />
     <Content Include="ThunderStore\README.md" />
