@@ -1,0 +1,10 @@
+{
+  "name": "Kaboom",
+  "author": "OdinPlus",
+  "description": "You know when you need to clear a big ole build you just dont like anymore",
+  "version_number": "0.0.1",
+  "website_url": "https://github.com/sbtoonz/KaBoom-",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.1900"
+  ]
+}
