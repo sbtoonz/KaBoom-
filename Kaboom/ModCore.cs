@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
 using JetBrains.Annotations;
@@ -12,7 +15,7 @@ namespace Kaboom
     public class Kaboom : BaseUnityPlugin
     {
         private const string ModName = "Kaboom!";
-        private const string ModVersion = "1.0";
+        private const string ModVersion = "2.0";
         private const string ModGUID = "Kaboom.Kaboom.Kaboom";
         private static Harmony harmony = null!;
 
@@ -29,7 +32,10 @@ namespace Kaboom
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             harmony = new(ModGUID);
-            harmony.PatchAll(assembly);
+            harmony.PatchAll(typeof(MarkerGrabber));
+            harmony.PatchAll(typeof(ProjectorThing));
+            harmony.PatchAll(typeof(KaboomPatch));
+            harmony.PatchAll(typeof(kaboomcirclepatch));
 
             Radius = config("General", "Radius of kabooming",
                 10, "How big of a circle to kaboom");
@@ -38,14 +44,16 @@ namespace Kaboom
 
             configSync.AddLockingConfigEntry(ServerConfigLocked);
         }
-        
-        
+
+
         public void OnDestroy()
         {
             harmony.UnpatchSelf();
         }
+        
 
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
+        [HarmonyWrapSafe]
         public static class MarkerGrabber
         {
             public static void Postfix(ZNetScene __instance)
@@ -59,7 +67,8 @@ namespace Kaboom
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
-        public static class projecterthign
+        [HarmonyWrapSafe]
+        public static class ProjectorThing
         {
             public static void Postfix(Player __instance)
             {
@@ -71,6 +80,7 @@ namespace Kaboom
         
         [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
         [HarmonyWrapSafe]
+        [HarmonyPriority(Priority.VeryLow)]
         public static class KaboomPatch
         {
             [UsedImplicitly]
@@ -144,19 +154,23 @@ namespace Kaboom
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
+        [HarmonyWrapSafe]
         public static class kaboomcirclepatch
         {
             public static void Postfix(Player __instance)
             {
-                if (ZInput.GetButton("AltPlace"))
+                if (Player.m_localPlayer.InPlaceMode())
                 {
-                    playerMarker!.SetActive(true);
-                    _projector!.m_radius = Radius!.Value;
-                    _projector.m_nrOfSegments = Radius.Value * 4;
-                }
-                else
-                {
-                    playerMarker!.SetActive(false);
+                    if (ZInput.GetButton("AltPlace"))
+                    {
+                        playerMarker!.SetActive(true);
+                        _projector!.m_radius = Radius!.Value;
+                        _projector.m_nrOfSegments = Radius.Value * 4;
+                    }
+                    else
+                    {
+                        playerMarker!.SetActive(false);
+                    }
                 }
             }
         }
